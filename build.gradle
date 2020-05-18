@@ -1,0 +1,45 @@
+buildscript {
+    ext {
+        springBootVersion = '2.3.0.RELEASE'
+        jacksonVersion = '2.11.0'
+        lombokVersion = '1.18.12'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.springframework.boot'
+
+group = 'eu.banking.casco'
+version = '0.0.1-SNAPSHOT'
+
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
+compileJava {
+    options.compilerArgs += ["-Xlint:unchecked"]
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+    implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+}
