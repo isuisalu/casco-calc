@@ -44,7 +44,7 @@ public class CascoCalculationServiceTest {
     public void testService() {
         List<Car> cars = carRepository.findAll();
         BigDecimal annual = service.computeAnnualCasco(cars.get(0));
-        assertThat(annual.intValue(), is(1090));
+        assertThat(annual.intValue(), is(1253));
     }
     @Test
     public void testRecalculation() {
@@ -52,7 +52,6 @@ public class CascoCalculationServiceTest {
         service.reCalculateCascos();
         long end = System.currentTimeMillis();
         System.out.println("reCalculateCascos took " + (end - start) + " ms");
-        //log.info("reCalculateCascos took {} ms", end - start);
         assertThat(cascoRepository.findAll().size(), is(64184));
     }
 }

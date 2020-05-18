@@ -72,6 +72,13 @@ public class CascoCalculationServiceImpl implements CascoCalculationService {
                     car.getPlateNumber(), car.getProducer());
             return null;
         }
+        if (car.getPreviousIndemnity() != null) {
+            BigDecimal prevIndemnityRisk = riskCoefficientRepository
+                    .findByName(RiskCoefficientRepository.PREVIOUS_INDEMNITY_RISK)
+                    .getValue();
+            annual += prevIndemnityRisk.doubleValue() * car.getPreviousIndemnity().doubleValue();
+        }
+
         MakeCoefficient make = makeCoefficientRepository
                 .findByName(car.getProducer().toLowerCase());
         double makeCoefficient = (make != null) ? make.getValue().doubleValue() : 1.;
