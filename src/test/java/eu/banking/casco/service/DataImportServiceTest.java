@@ -44,13 +44,15 @@ public class DataImportServiceTest {
     public void testCarsImport() {
         dataImportService.importCars("vehicles.csv");
         List<Car> cars = carRepository.findAll();
-        assertThat(cars.size(), is(64195));
+        assertThat(cars.size(), is(64193));
     }
     @Test
     public void importRiskData() {
        dataImportService.importRiskData("data.json");
        List<RiskCoefficient> risks = riskCoefficientRepository.findAll();
        assertThat(risks.size(), is(3));
+       RiskCoefficient ageRisk = riskCoefficientRepository
+                .findByName(RiskCoefficientRepository.VEHICLE_AGE_RISK);
        List<MakeCoefficient> makes = makeCoefficientRepository.findAll();
        assertThat(makes.size(), is(6));
        List<AvgPurchasePrice> prices = avgPurchasePriceRepository.findAll();

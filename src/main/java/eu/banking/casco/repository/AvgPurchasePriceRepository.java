@@ -1,12 +1,11 @@
 package eu.banking.casco.repository;
 
 import eu.banking.casco.model.AvgPurchasePrice;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface AvgPurchasePriceRepository {
+public interface AvgPurchasePriceRepository
+        extends JpaRepository<AvgPurchasePrice, Long> {
 
     AvgPurchasePrice findByProducer(String producer);
-    List<AvgPurchasePrice> findAll();
-    void save(AvgPurchasePrice price);
 }
+

@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -38,34 +39,49 @@ public class DataImportServiceImpl implements DataImportService {
     }
 
     public void importCars(String fileName) {
+        final Map<String, String> carsMap = new HashMap<>();
         BufferedReader reader;
+        Car car = null;
         try {
             InputStream is = Thread.currentThread().getContextClassLoader()
                     .getResourceAsStream(fileName);
             reader = new BufferedReader(new InputStreamReader(is));
             String line = reader.readLine(); // header row
-            Car car = null;
             while ((line = reader.readLine()) != null) {
                 try {
 
                     String[] cols = line.split(",");
-                    car = new Car();
-                    car.setPlateNumber(cols[1]);
-                    car.setFirstRegistration(Integer.parseInt(cols[2]));
-                    car.setPurchasePrice(Integer.parseInt(cols[3]));
-                    car.setProducer(cols[4]);
-                    car.setMileage(Integer.parseInt(cols[5]));
-                    car.setPreviousIndemnity(new BigDecimal(cols[6]));
+
+                    int firstRegistration = Integer.parseInt(cols[2]);
+                    if (firstRegistration >= 2020 || firstRegistration < 1950) {
+                        log.warn("unrealistic firstRegistration {}", firstRegistration);
+                        continue;
+                    }
+                    if (carsMap.get(cols[1]) == null) {
+                        carsMap.put(cols[1], cols[1]);
+                        car = new Car();
+                        car.setPlateNumber(cols[1]);
+                        car.setFirstRegistration(Integer.parseInt(cols[2]));
+                        car.setPurchasePrice(Integer.parseInt(cols[3]));
+                        car.setProducer(cols[4]);
+                        car.setMileage(Integer.parseInt(cols[5]));
+                        car.setPreviousIndemnity(new BigDecimal(cols[6]));
+                    } else {
+                        continue;
+                    }
                 } catch (Exception e) {
                     log.error("Exception reading car with reg. number {}: {}",
                             car.getPlateNumber(), e.getMessage());
                     continue;
                 }
-                carRepository.save(car);
+                if (car != null) {
+                    carRepository.save(car);
+                }
             }
             reader.close();
         } catch (Exception e) {
-            log.error("Exception during cars import: ", e.getMessage());
+            String msg = String.format("Exception during cars import of car %s : ", car);
+            log.error(msg, e.getMessage());
             throw new RuntimeException(e);
         }
     }

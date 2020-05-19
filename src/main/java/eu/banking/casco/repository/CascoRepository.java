@@ -1,11 +1,13 @@
 package eu.banking.casco.repository;
 
 import eu.banking.casco.model.Casco;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.List;
+public interface CascoRepository extends PagingAndSortingRepository<Casco, Long>,
+        JpaRepository<Casco, Long> {
 
-public interface CascoRepository {
+    @Query("select c from Casco c where c.car.plateNumber = :plateNumber")
     Casco findByPlateNumber(String plateNumber);
-    List<Casco> findAll();
-    void save(Casco casco);
 }

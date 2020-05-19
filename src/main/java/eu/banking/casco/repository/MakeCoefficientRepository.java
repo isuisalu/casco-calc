@@ -1,11 +1,10 @@
 package eu.banking.casco.repository;
 
 import eu.banking.casco.model.MakeCoefficient;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface MakeCoefficientRepository {
+public interface MakeCoefficientRepository
+        extends JpaRepository<MakeCoefficient, Long> {
     MakeCoefficient findByName(String name);
-    List<MakeCoefficient> findAll();
-    void save(MakeCoefficient make);
 }
+
