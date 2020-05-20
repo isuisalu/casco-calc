@@ -16,7 +16,6 @@
                 vertical
               ></v-divider>
               <v-spacer></v-spacer>
-                 <v-switch v-model="monthly" class="mx-2" label="Monthly payment"></v-switch>
             </v-toolbar>
           </template>
       </v-data-table>
@@ -56,16 +55,6 @@ import backend from '../backend'
                     //EventBus.$emit(types.NOT_BUSY)
                     console.log('response error: ' + JSON.stringify(error.response.data))
                   })
-      },
-    },
-    watch: {
-      monthly (val) {
-          console.log("Switch monthly: " + this.monthly + " val: " + val);
-          if (this.monthly) {
-              this.headers.splice(2, 0, { text: 'Monthly payment', value: 'monthly' })
-          } else {
-             this.headers.splice(2, 1)
-          }
       },
     },
   }
