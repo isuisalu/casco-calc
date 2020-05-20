@@ -171,8 +171,7 @@ import * as types from '../event-types.js'
                 })
       },
       save () {
-        console.log("Save risk: " + JSON.stringify(this.editedItem))
-        console.log("Save risk editedIndex: " + this.editedIndex)
+        //console.log("Save risk: " + JSON.stringify(this.editedItem))
         if (this.editedIndex > -1) {
           backend.doWithRiskData(constant.PUT_METHOD, this.riskName,
             this.editedItem.id, this.editedItem)

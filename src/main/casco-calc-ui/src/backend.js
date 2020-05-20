@@ -54,7 +54,7 @@ export default {
         } else if (methodName === constant.POST_METHOD) {
             return axios.post(CAR_URL, data)
         } else if (methodName === constant.PUT_METHOD) {
-            return axios.post(CAR_URL + "/" + id, data)
+            return axios.put(CAR_URL + "/" + id, data)
         } else if (methodName === constant.DELETE_METHOD) {
             return axios.delete(CAR_URL + "/" + id)
         }

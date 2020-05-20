@@ -17,11 +17,9 @@
               ></v-divider>
               <v-spacer></v-spacer>
               <v-dialog v-model="dialog" max-width="500px">
-<!--
                 <template v-slot:activator="{ on }">
                   <v-btn color="primary" dark class="mb-2" v-on="on">New</v-btn>
                 </template>
-                -->
                 <v-card>
                   <v-card-title>
                     <span class="headline">{{ formTitle }}</span>
@@ -46,18 +44,16 @@
                           <v-text-field v-model="editedItem.mileage" label="Mileage"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.prev_indemnity" label="Prev. indemnity"></v-text-field>
+                          <v-text-field v-model="editedItem.previousIndemnity" label="Prev. indemnity"></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
                   </v-card-text>
-                  <!--
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
                     <v-btn color="blue darken-1" text @click="save">Save</v-btn>
                   </v-card-actions>
-                  -->
                 </v-card>
               </v-dialog>
             </v-toolbar>
@@ -85,6 +81,8 @@
 <script>
 import backend from '../backend'
 import * as constant from '../constants'
+import EventBus from '../event-bus'
+import * as types from '../event-types.js'
 
   export default {
     data: () => ({
@@ -100,11 +98,12 @@ import * as constant from '../constants'
         { text: 'Producer', value: 'producer' },
         { text: 'Mileage', value: 'mileage' },
         { text: 'Prev. indemnity', value: 'previousIndemnity' },
-        //{ text: 'Actions', value: 'actions', sortable: false },
+        { text: 'Actions', value: 'actions', sortable: false },
       ],
       cars: [],
       editedIndex: -1,
       editedItem: {
+        id: '',
         plateNumber: '',
         firstRegistration: 0,
         purchasePrice: 0,
@@ -113,6 +112,7 @@ import * as constant from '../constants'
         prevIndemnity: 0.,
       },
       defaultItem: {
+        id: '',
         plateNumber: '',
         firstRegistration: 0,
         purchasePrice: 0,
@@ -143,6 +143,7 @@ import * as constant from '../constants'
           this.loading = true
           backend.doWithCars(constant.GET_METHOD)
               .then(response => {
+                    console.log('cars get response: ' + JSON.stringify(response.data[0]))
                     this.cars = response.data
                     this.loading = false
                  }).catch(error => {
@@ -160,8 +161,18 @@ import * as constant from '../constants'
       },
 
       deleteItem (item) {
+        const id = item.id
         const index = this.cars.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+        let self = this
+        backend.doWithCars(constant.DELETE_METHOD, id, null)
+            .then(response => {
+                     console.log("response: " + JSON.stringify(response.status))
+                     self.cars.splice(index, 1)
+                   }).catch(error => {
+                      EventBus.$emit(types.ERROR_HAPPENED, error.message)
+                      console.log('response error: ' + JSON.stringify(error.message))
+                    })
+
       },
 
       close () {
@@ -173,10 +184,25 @@ import * as constant from '../constants'
       },
 
       save () {
+        let self = this
         if (this.editedIndex > -1) {
-          Object.assign(this.cars[this.editedIndex], this.editedItem)
+          backend.doWithCars(constant.PUT_METHOD, this.editedItem.id, this.editedItem)
+            .then(response => {
+                  console.log('put response: ' + JSON.stringify(response))
+                  Object.assign(this.cars[this.editedIndex], response.data)
+               }).catch(error => {
+                  EventBus.$emit(types.ERROR_HAPPENED, error.message)
+                  console.log('response error: ' + JSON.stringify(error.message))
+                })
         } else {
-          this.cars.push(this.editedItem)
+          backend.doWithCars(constant.POST_METHOD, null, this.editedItem)
+            .then(response => {
+                   console.log('post response: ' + JSON.stringify(response))
+                   self.cars.push(response.data)
+               }).catch(error => {
+                  EventBus.$emit(types.ERROR_HAPPENED, error.message)
+                  console.log('response error: ' + JSON.stringify(error.message))
+                })
         }
         this.close()
       },
