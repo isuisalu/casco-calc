@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -40,7 +41,15 @@ public class CarsController {
     }
     @DeleteMapping("car/{id}")
     public HttpEntity<?> deleteCar(@PathVariable("id") final long id) {
-        carRepository.deleteById(id);
+        try {
+            Optional<Car> carOpt = carRepository.findById(id);
+            if (carOpt.isPresent()) {
+                carRepository.delete(carOpt.get());
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.noContent().build();
     }
 }

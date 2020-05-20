@@ -15,4 +15,8 @@ public final class RiskCoefficient extends ACoefficient {
 
     @Column(name = "in_use", columnDefinition = "BOOLEAN")
     private Boolean inUse;
+/**
+    @Column(name = "car_property")
+    private String carProperty;
+    */
 }

@@ -143,12 +143,12 @@ import * as types from '../event-types.js'
           this.loading = true
           backend.doWithCars(constant.GET_METHOD)
               .then(response => {
-                    console.log('cars get response: ' + JSON.stringify(response.data[0]))
+                    //console.log('cars get response: ' + JSON.stringify(response.data[0]))
                     this.cars = response.data
                     this.loading = false
                  }).catch(error => {
                     this.loading = false
-                    //EventBus.$emit(types.NOT_BUSY)
+                    EventBus.$emit(types.ERROR_HAPPENED)
                     console.log('response error: ' + JSON.stringify(error.response.data))
                   })
 
@@ -185,11 +185,12 @@ import * as types from '../event-types.js'
 
       save () {
         let self = this
+        const index = this.editedIndex
         if (this.editedIndex > -1) {
           backend.doWithCars(constant.PUT_METHOD, this.editedItem.id, this.editedItem)
             .then(response => {
-                  console.log('put response: ' + JSON.stringify(response))
-                  Object.assign(this.cars[this.editedIndex], response.data)
+                  //console.log('put response: ' + JSON.stringify(response))
+                  Object.assign(self.cars[index], response.data)
                }).catch(error => {
                   EventBus.$emit(types.ERROR_HAPPENED, error.message)
                   console.log('response error: ' + JSON.stringify(error.message))
@@ -197,7 +198,7 @@ import * as types from '../event-types.js'
         } else {
           backend.doWithCars(constant.POST_METHOD, null, this.editedItem)
             .then(response => {
-                   console.log('post response: ' + JSON.stringify(response))
+                   //console.log('post response: ' + JSON.stringify(response))
                    self.cars.push(response.data)
                }).catch(error => {
                   EventBus.$emit(types.ERROR_HAPPENED, error.message)

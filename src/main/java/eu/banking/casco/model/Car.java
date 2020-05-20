@@ -21,7 +21,7 @@ public final class Car extends ABaseEntity {
     @Column(name = "purchase_price", nullable = false)
     private Integer purchasePrice;
     @Column(name = "producer", nullable = false)
-    private String Producer;
+    private String producer;
     @Column(name = "mileage", nullable = false)
     private Integer mileage;
     @Column(name = "previous_indemnity", precision=7, scale = 2)

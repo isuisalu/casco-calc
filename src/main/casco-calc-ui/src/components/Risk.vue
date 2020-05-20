@@ -30,10 +30,20 @@
                     <v-container>
                       <v-row>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.name" label="Name"></v-text-field>
+                           <template v-if="!isPriceRisk">
+                                <v-text-field v-model="editedItem.name" label="Name"></v-text-field>
+                          </template>
+                           <template v-if="isPriceRisk">
+                                <v-text-field v-model="editedItem.producer" label="Producer"></v-text-field>
+                          </template>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.value" label="Value"></v-text-field>
+                          <template v-if="!isPriceRisk">
+                            <v-text-field v-model="editedItem.value" label="Value"></v-text-field>
+                          </template>
+                           <template v-if="isPriceRisk">
+                                <v-text-field v-model="editedItem.price" label="Price"></v-text-field>
+                          </template>
                         </v-col>
                         </v-row>
                     </v-container>
@@ -100,6 +110,9 @@ import * as types from '../event-types.js'
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
       },
+      isPriceRisk () {
+        return this.riskName === constant.AVG_PURCHASE_PRICE
+      },
     },
 
     watch: {
@@ -113,7 +126,6 @@ import * as types from '../event-types.js'
     },
     methods: {
       initialize () {
-            console.log("initialize")
             if (this.riskName === constant.AVG_PURCHASE_PRICE) {
               this.headers = [
                 { text: 'Producer', value: 'producer' },
@@ -155,7 +167,7 @@ import * as types from '../event-types.js'
                       EventBus.$emit(types.ERROR_HAPPENED, error.message)
                       console.log('response error: ' + JSON.stringify(error.message))
                     })
-       },
+      },
       close () {
         this.dialog = false
         this.$nextTick(() => {
