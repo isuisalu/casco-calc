@@ -18,11 +18,9 @@
               ></v-divider>
               <v-spacer></v-spacer>
               <v-dialog v-model="dialog" max-width="500px">
-              <!--
                 <template v-slot:activator="{ on }">
                   <v-btn color="primary" dark class="mb-2" v-on="on">New</v-btn>
                 </template>
-                -->
                 <v-card>
                   <v-card-title>
                     <span class="headline">{{ formTitle }}</span>
@@ -40,13 +38,11 @@
                         </v-row>
                     </v-container>
                   </v-card-text>
-                  <!--
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
                     <v-btn color="blue darken-1" text @click="save">Save</v-btn>
                   </v-card-actions>
-                  -->
                 </v-card>
               </v-dialog>
             </v-toolbar>
@@ -130,7 +126,7 @@ import * as types from '../event-types.js'
           if (this.showUse) {
             this.headers.push({ text: 'In use', value: 'inUse' })
           }
-          //this.headers.push({ text: 'Action', value: 'actions', sortable: false})
+          this.headers.push({ text: 'Action', value: 'actions', sortable: false})
 
           backend.doWithRiskData(constant.GET_METHOD, this.riskName)
               .then(response => {
@@ -148,10 +144,18 @@ import * as types from '../event-types.js'
       },
 
       deleteItem (item) {
+        const id = item.id
         const index = this.risks.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.risks.splice(index, 1)
-      },
-
+        let self = this
+        backend.doWithRiskData(constant.DELETE_METHOD, this.riskName, id, null)
+            .then(response => {
+                     console.log("response: " + JSON.stringify(response.status))
+                     self.risks.splice(index, 1)
+                   }).catch(error => {
+                      EventBus.$emit(types.ERROR_HAPPENED, error.message)
+                      console.log('response error: ' + JSON.stringify(error.message))
+                    })
+       },
       close () {
         this.dialog = false
         this.$nextTick(() => {
@@ -160,11 +164,13 @@ import * as types from '../event-types.js'
         })
       },
       saveUse(item) {
-        console.log("Risk saveUse: " + JSON.stringify(item))
+        //console.log("Risk saveUse: " + JSON.stringify(item))
         this.editedIndex = this.risks.indexOf(item)
+        const index = this.editedIndex
+        let self = this
         backend.doWithRiskData(constant.PUT_METHOD, this.riskName, item.id, item)
             .then(response => {
-                  Object.assign(this.risks[this.editedIndex], response.data)
+                  Object.assign(self.risks[index], response.data)
                }).catch(error => {
                   EventBus.$emit(types.ERROR_HAPPENED, error.message)
                   console.log('response error: ' + JSON.stringify(error.response.data))
@@ -172,12 +178,15 @@ import * as types from '../event-types.js'
       },
       save () {
         //console.log("Save risk: " + JSON.stringify(this.editedItem))
+        const index = this.editedIndex
+        let self = this
+
         if (this.editedIndex > -1) {
           backend.doWithRiskData(constant.PUT_METHOD, this.riskName,
             this.editedItem.id, this.editedItem)
             .then(response => {
-                  console.log('put response: ' + JSON.stringify(response))
-                  Object.assign(this.risks[this.editedIndex], this.editedItem)
+                  //console.log('put response: ' + JSON.stringify(response))
+                  Object.assign(self.risks[index], response.data)
                }).catch(error => {
                   EventBus.$emit(types.ERROR_HAPPENED, error.message)
                   console.log('response error: ' + JSON.stringify(error.message))
@@ -185,8 +194,8 @@ import * as types from '../event-types.js'
         } else {
           backend.doWithRiskData(constant.POST_METHOD, this.riskName, null, this.editedItem)
             .then(response => {
-                   console.log('post response: ' + JSON.stringify(response))
-                   this.risks.push(response.data)
+                   //console.log('post response: ' + JSON.stringify(response))
+                   self.risks.push(response.data)
                }).catch(error => {
                   EventBus.$emit(types.ERROR_HAPPENED, error.message)
                   console.log('response error: ' + JSON.stringify(error.message))
