@@ -37,7 +37,9 @@ public class DataImportServiceImpl implements DataImportService {
         importCars("vehicles.csv");
         importRiskData("data.json");
     }
-
+    public void importCars() {
+        importCars("vehicles.csv");
+    }
     public void importCars(String fileName) {
         final Map<String, String> carsMap = new HashMap<>();
         BufferedReader reader;
@@ -86,6 +88,9 @@ public class DataImportServiceImpl implements DataImportService {
         }
     }
 
+    public void importRiskData() {
+        importRiskData("data.json");
+    }
     @SuppressWarnings("unchecked")
     public void importRiskData(String fileName) {
         try {
@@ -98,6 +103,7 @@ public class DataImportServiceImpl implements DataImportService {
             for (String key : coefficients.keySet()) {
                 RiskCoefficient coefficient = new RiskCoefficient();
                 coefficient.setName(key);
+                coefficient.setInUse(true);
                 coefficient.setValue(BigDecimal.valueOf(coefficients.get(key)));
                 riskCoefficientRepository.save(coefficient);
             }

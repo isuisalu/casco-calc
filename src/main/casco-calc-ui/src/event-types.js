@@ -1,0 +1,5 @@
+export const ERROR_HAPPENED = 'ERROR_HAPPENED'
+export const FORM_READY = 'FORM_READY'
+export const FORM_CLEARED = 'FORM_CLEARED'
+export const BUSY = 'BUSY'
+export const NOT_BUSY = 'NOT_BUSY'

@@ -16,6 +16,6 @@ public class AvgPurchasePrice  extends ABaseEntity {
 
     @Column(name = "producer", nullable = false)
     private String producer;
-    @Column(name = "previous_indemnity", nullable = false, precision=5, scale = 0)
+    @Column(name = "price", nullable = false, precision=5, scale = 0)
     private BigDecimal price;
 }

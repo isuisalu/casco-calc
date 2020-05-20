@@ -25,8 +25,6 @@ public class StartupServiceImpl implements ApplicationContextAware {
     @PostConstruct
     public void init() {
         dataImportService.importAll();
-        cascoCalculationService.reCalculateCascos();
-        this.applicationContext.close();
     }
 
     @Override
