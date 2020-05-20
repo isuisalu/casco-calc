@@ -39,9 +39,16 @@ public class CascoCalculationServiceTest {
     @Autowired
     private DataImportService dataImportService;
 
+    @Before
+    public void before() {
+        try {
+            dataImportService.importAll();
+        } catch (Exception e) {
+            // Happens during parallel execution
+        }
+    }
     @Test
     public void testService() {
-        dataImportService.importAll();
         Pageable firstPageWithOneElement = PageRequest.of(0, 1);
         Page<Car> carPage = carRepository.findAll(firstPageWithOneElement);
         BigDecimal annual = service.computeAnnualCasco(carPage.get().findFirst().get());
