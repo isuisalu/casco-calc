@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -46,8 +47,10 @@ public class RiskManagementControllerTest {
         RiskCoefficient coefficient = new RiskCoefficient();
         coefficient.setName("age_risk");
         coefficient.setValue(BigDecimal.valueOf(0.9));
+        List<RiskCoefficient> risks = new ArrayList();
+        risks.add(coefficient);
         when(riskCoefficientRepository.findAll())
-                .thenReturn(List.of(coefficient));
+                .thenReturn(risks);
 
         ResultActions result = mockMvc.perform(get("/risks")
                 .accept(APPLICATION_JSON))
